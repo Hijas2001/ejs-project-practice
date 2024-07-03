@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const Mongoddbclint = require("mongodb").MongoClient 
+const { MongoClient, ServerApiVersion } = require('mongodb');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -10,41 +11,63 @@ router.get('/', function(req, res, next) {
 router.post("/submit",(req,res,next)=>{
 
   console.log( req.body);
-  
-  // Mongoddbclint.connect("mongodb+srv://hijas9089k:3jxxz1CS84BY5pU0@cluster0.fz8gap7.mongodb.net/",(err,clint)=>{
-  //   if(err){
-  //     console.log(err);
-  //   }else{
-  //     clint.db("ejsecom").collection("user").insertOne(req.body)
-  //     console.log("database connected");
-  //   }
-  // })
 
-  const { MongoClient } = require('mongodb');
-
-  const uri = "mongodb+srv://hijas9089k:3jxxz1CS84BY5pU0@cluster0.fz8gap7.mongodb.net/?retryWrites=true&w=majority";
   
-  MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-    if (err) {
-      console.error('Failed to connect to the database', err);
-      return;
+  const uri = "mongodb+srv://hijas9089k:hijas90897459@cluster0.fz8gap7.mongodb.net/?appName=Cluster0";
+
+  const clint = new MongoClient(uri)
+  async function run() {
+    try {
+      await clint.connect()
+      console.log("mongodb connnected successfuly");
+      
+    const data =await clint.db("ejsproject").collection("User").insertOne(req.body)
+
+     console.log("data inseerted succcessfully",data);
+     
+      
+    } finally {
+      clint.close()
     }
-  
-    const db = client.db('ejsecom');
-    const collection = db.collection('user');
-  
-    // Assuming req.body contains the data to be inserted
-    collection.insertOne(req.body, (err, result) => {
-      if (err) {
-        console.error('Failed to insert document', err);
-      } else {
-        console.log('Document inserted successfully', result);
-      }
-      client.close();
-    });
-  });
-  
+  }
 
+  run().catch(console.dir)
+  
+  // // Create a MongoClient with a MongoClientOptions object to set the Stable API version
+  // const client = new MongoClient(uri, {
+  //   serverApi: {
+  //     version: ServerApiVersion.v1,
+  //     strict: true,
+  //     deprecationErrors: true,
+  //   }
+  // });
+  
+  // async function run() {
+  //   try {
+  //     // Connect the client to the server	(optional starting in v4.7)
+  //     await client.connect();
+      
+  //     // Send a ping to confirm a successful connection
+  //     await client.db("admin").command({ ping: 1 });
+  //     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  
+  //     // Specify the database and collection
+  //     const database = client.db("mydatabase"); // Replace with your database name
+  //     const collection = database.collection("mycollection"); // Replace with your collection name
+  
+  //     // Create a document to insert
+  
+  //     // Insert the document
+  //     const result = await collection.insertOne(req.body);
+  //     console.log(`A document was inserted with the _id: ${result.insertedId}`);
+  //   } finally {
+  //     // Ensures that the client will close when you finish/error
+  //     await client.close();
+  //   }
+  // }
+  
+  // run().catch(console.dir);
+  
 
 
   res.send("you are login ")
